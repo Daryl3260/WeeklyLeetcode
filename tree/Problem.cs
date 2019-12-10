@@ -163,7 +163,50 @@ namespace Leetcode.leetcode_cn.tree
         public class Solution {
             public IList<TreeNode> GenerateTrees(int n)
             {
-                return null;
+                var list = new List<int>();
+                for (int i = 1; i <= n; i++)
+                {
+                    list.Add(i);
+                }
+
+                return SubGenerate(list);
+            }
+
+            public IList<TreeNode> SubGenerate(IList<int> list)
+            {
+                if (!list.Any()) return new List<TreeNode>();
+                var rs = new List<TreeNode>();
+                for (var i = 0; i < list.Count; i++)
+                {
+                    var val = list[i];
+                    var leftList = new List<int>();
+                    var rightList = new List<int>();
+                    for (var j = 0; j < i; j++)
+                    {
+                        leftList.Add(list[j]);
+                    }
+
+                    for (var j = i + 1; j < list.Count; j++)
+                    {
+                        rightList.Add(list[j]);
+                    }
+
+                    var leftTrees = SubGenerate(leftList);
+                    var rightTrees = SubGenerate(rightList);
+                    if(!leftList.Any())leftTrees.Add(null);
+                    if(!rightList.Any())rightTrees.Add(null);
+                    foreach (var leftTree in leftTrees)
+                    {
+                        foreach (var rightTree in rightTrees)
+                        {
+                            var root = new TreeNode(val);
+                            root.left = leftTree;
+                            root.right = rightTree;
+                            rs.Add(root);
+                        }
+                    }
+                }
+                return rs;
             }
         }
 }

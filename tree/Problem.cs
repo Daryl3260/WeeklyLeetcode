@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Leetcode.leetcode_cn.tree
 {
@@ -17,10 +18,11 @@ namespace Leetcode.leetcode_cn.tree
             val = x;
         }
     }
+
     namespace p1
     {
 
-        
+
 
         public class Solution
         {
@@ -28,8 +30,8 @@ namespace Leetcode.leetcode_cn.tree
             {
                 var rs = new List<IList<int>>();
                 if (root == null) return rs;
-                var queue = new Queue<Tuple<TreeNode,int>>();
-                queue.Enqueue(new Tuple<TreeNode, int>(root,0));
+                var queue = new Queue<Tuple<TreeNode, int>>();
+                queue.Enqueue(new Tuple<TreeNode, int>(root, 0));
                 var currentLevel = 0;
                 var subList = new List<int>();
                 while (queue.Any())
@@ -43,24 +45,27 @@ namespace Leetcode.leetcode_cn.tree
                         subList = new List<int>();
                         currentLevel = level;
                     }
+
                     subList.Add(node.val);
                     if (node.left != null)
                     {
-                        queue.Enqueue(new Tuple<TreeNode, int>(node.left,level+1));
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.left, level + 1));
                     }
 
                     if (node.right != null)
                     {
-                        queue.Enqueue(new Tuple<TreeNode, int>(node.right,level+1));
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.right, level + 1));
                     }
-                    
+
                 }
+
                 rs.Add(subList);
                 var reversed = new List<IList<int>>();
                 for (var i = rs.Count - 1; i > -1; i--)
                 {
                     reversed.Add(rs[i]);
                 }
+
                 return reversed;
             }
         }
@@ -124,27 +129,28 @@ namespace Leetcode.leetcode_cn.tree
                 if (root == null) return rs;
                 var node = root;
 
-                    while (node != null)
-                    {
-                        stack.Push(node);
-                        node = node.left;
-                    }
+                while (node != null)
+                {
+                    stack.Push(node);
+                    node = node.left;
+                }
 
-                    while (stack.Any())
+                while (stack.Any())
+                {
+                    var top = stack.Pop();
+                    rs.Add(top.val);
+                    if (top.right != null)
                     {
-                        var top = stack.Pop();
-                        rs.Add(top.val);
-                        if (top.right != null)
+                        node = top.right;
+                        while (node != null)
                         {
-                            node = top.right;
-                            while (node!= null)
-                            {
-                                stack.Push(node);
-                                node = node.left;
-                            }
+                            stack.Push(node);
+                            node = node.left;
                         }
                     }
-                    return rs;
+                }
+
+                return rs;
             }
         }
     }
@@ -160,7 +166,8 @@ namespace Leetcode.leetcode_cn.tree
  *     public TreeNode(int x) { val = x; }
  * }
  */
-        public class Solution {
+        public class Solution
+        {
             public IList<TreeNode> GenerateTrees(int n)
             {
                 var list = new List<int>();
@@ -193,8 +200,8 @@ namespace Leetcode.leetcode_cn.tree
 
                     var leftTrees = SubGenerate(leftList);
                     var rightTrees = SubGenerate(rightList);
-                    if(!leftList.Any())leftTrees.Add(null);
-                    if(!rightList.Any())rightTrees.Add(null);
+                    if (!leftList.Any()) leftTrees.Add(null);
+                    if (!rightList.Any()) rightTrees.Add(null);
                     foreach (var leftTree in leftTrees)
                     {
                         foreach (var rightTree in rightTrees)
@@ -206,10 +213,11 @@ namespace Leetcode.leetcode_cn.tree
                         }
                     }
                 }
+
                 return rs;
             }
         }
-}
+    }
 
     namespace p6
     {
@@ -222,8 +230,10 @@ namespace Leetcode.leetcode_cn.tree
  *     public TreeNode(int x) { val = x; }
  * }
  */
-        public class Solution {
-            public IList<int> PreorderTraversal(TreeNode root) {
+        public class Solution
+        {
+            public IList<int> PreorderTraversal(TreeNode root)
+            {
                 var rs = new List<int>();
                 if (root == null) return rs;
                 var stack = new Stack<TreeNode>();
@@ -249,7 +259,7 @@ namespace Leetcode.leetcode_cn.tree
                 return rs;
             }
         }
-}
+    }
 
     namespace p7
     {
@@ -271,6 +281,7 @@ namespace Leetcode.leetcode_cn.tree
                     }
                     else break;
                 }
+
                 return lca;
             }
 
@@ -282,12 +293,13 @@ namespace Leetcode.leetcode_cn.tree
                     ancestors.Add(root);
                     return true;
                 }
+
                 ancestors.Add(root);
                 if (BuildAncestors(root.left, target, ancestors) || BuildAncestors(root.right, target, ancestors))
                     return true;
                 else
                 {
-                    ancestors.RemoveAt(ancestors.Count-1);
+                    ancestors.RemoveAt(ancestors.Count - 1);
                     return false;
                 }
 
@@ -311,37 +323,137 @@ namespace Leetcode.leetcode_cn.tree
             public int MaxPathSum(TreeNode root)
             {
                 if (root == null) return 0;
-                SubMaxSum(root,out var maxSum,out var maxSinglePath);
+                SubMaxSum(root, out var maxSum, out var maxSinglePath);
                 return maxSum;
             }
 
-            public void SubMaxSum(TreeNode root,out int maxSum,out int maxSinglePath)
+            public void SubMaxSum(TreeNode root, out int maxSum, out int maxSinglePath)
             {
                 if (root.left == null && root.right == null)
                 {
                     maxSum = root.val;
                     maxSinglePath = root.val;
                 }
-                else if(root.left==null||root.right==null)
+                else if (root.left == null || root.right == null)
                 {
                     var child = root.left ?? root.right;
-                    SubMaxSum(child,out var subMaxSum,out var subMaxSinglePath);
+                    SubMaxSum(child, out var subMaxSum, out var subMaxSinglePath);
                     if (subMaxSinglePath >= 0)
                     {
                         maxSinglePath = subMaxSinglePath + root.val;
                     }
                     else maxSinglePath = root.val;
+
                     maxSum = Math.Max(maxSinglePath, subMaxSum);
                 }
                 else
                 {
-                    SubMaxSum(root.left,out var leftMax,out var leftSingle);
-                    SubMaxSum(root.right,out var rightMax,out var rightSingle);
+                    SubMaxSum(root.left, out var leftMax, out var leftSingle);
+                    SubMaxSum(root.right, out var rightMax, out var rightSingle);
                     maxSinglePath = Math.Max(Math.Max(root.val, root.val + leftSingle), root.val + rightSingle);
                     maxSum = Math.Max(Math.Max(leftMax, rightMax),
                         Math.Max(maxSinglePath, root.val + leftSingle + rightSingle));
                 }
             }
         }
+    }
+
+    namespace p9
+    {
+        public class Codec
+        {
+            public int FindDepth(TreeNode root)
+            {
+                if (root == null) return 0;
+                else return 1 + Math.Max(FindDepth(root.left), FindDepth(root.right));
+            }
+
+            // Encodes a tree to a single string.
+            public string serialize(TreeNode root)
+            {
+                if (root == null) return "null";
+                var currentDepth = 0;
+                var subList = new List<TreeNode>();
+                var queue = new Queue<Tuple<TreeNode,int>>();
+                queue.Enqueue(new Tuple<TreeNode, int>(root,0));
+                var builder = new StringBuilder();
+                while (queue.Any())
+                {
+                    var top = queue.Dequeue();
+                    var node = top.Item1;
+                    var depth = top.Item2;
+                    if (depth > currentDepth)
+                    {
+                        currentDepth = depth;
+                        foreach (var treeNode in subList)
+                        {
+                            if (treeNode == null)
+                            {
+                                builder.Append("null").Append(",");
+                            }
+                            else
+                            {
+                                builder.Append(treeNode.val).Append(",");
+                            }
+                        }
+                        builder.Append("|");
+                        subList.Clear();
+                    }
+                    subList.Add(node);
+                    if (node != null)
+                    {
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.left,depth+1));
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.right,depth+1));
+                    }
+                }
+
+                return builder.ToString();
+            }
+
+            // Decodes your encoded data to tree.
+            public TreeNode deserialize(string data)
+            {
+                if (data == "null") return null;
+                var levels = data.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+                var topLevel = levels[0];
+                var values = topLevel.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                var root = new TreeNode(int.Parse(values[0]));
+                var previousLevel = new List<TreeNode>{root};
+                var nodeList = new List<TreeNode>();
+                for (var i = 1; i < levels.Length; i++)
+                {
+                    var level = levels[i];
+                    values = level.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var value in values)
+                    {
+                        if (value == "null")
+                        {
+                            nodeList.Add(null);
+                        }
+                        else
+                        {
+                            nodeList.Add(new TreeNode(int.Parse(value)));
+                        }
+                    }
+
+                    for (var j = 0; j < previousLevel.Count; j++)
+                    {
+                        var parent = previousLevel[j];
+                        parent.left = nodeList[j * 2];
+                        parent.right = nodeList[j * 2 + 1];
+                    }
+                    previousLevel.Clear();
+                    foreach (var treeNode in nodeList)
+                    {
+                        if(treeNode!=null)previousLevel.Add(treeNode);
+                    }
+                    nodeList.Clear();
+                }
+                
+                return root;
+            }
+        }
+
+        
     }
 }

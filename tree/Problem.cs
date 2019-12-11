@@ -503,4 +503,84 @@ namespace Leetcode.leetcode_cn.tree
             }
         }
     }
+
+    namespace p10.V2
+    {
+        /**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int x) { val = x; }
+ * }
+ */
+        public class Solution
+        {
+            public IList<int> PostorderTraversal(TreeNode root)
+            {
+                var rs = new LinkedList<int>();
+                if (root == null) return new List<int>(rs);
+                var stack = new Stack<TreeNode>();
+                stack.Push(root);
+                while (stack.Any())
+                {
+                    var top = stack.Pop();
+                    rs.AddFirst(top.val);
+                    if (top.left != null)
+                    {
+                        stack.Push(top.left);
+                    }
+
+                    if (top.right != null)
+                    {
+                        stack.Push(top.right);
+                    }
+                }
+                return new List<int>(rs);
+            }
+        }
+    }
+
+    namespace p10.V3
+    {
+        /**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int x) { val = x; }
+ * }
+ */
+        public class Solution {
+            public class Wrapper
+            {
+                public int Val { get; set; }
+            }
+            public IList<int> PostorderTraversal(TreeNode root) {
+                if(root==null)return new List<int>();
+                var stack = new Stack<object>();
+                stack.Push(root);
+                var rs = new List<int>();
+                while (stack.Any())
+                {
+                    var top = stack.Pop();
+                    if (top is TreeNode)
+                    {
+                        var node = top as TreeNode;
+                        stack.Push(new Wrapper{Val = node.val});
+                        if(node.right!=null) stack.Push(node.right);
+                        if(node.left!=null) stack.Push(node.left);
+                    }
+                    else
+                    {
+                        var wrapper = top as Wrapper;
+                        rs.Add(wrapper.Val);
+                    }
+                }
+                return rs;
+            }
+        }
+}
 }

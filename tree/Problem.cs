@@ -456,4 +456,51 @@ namespace Leetcode.leetcode_cn.tree
 
         
     }
+
+    namespace p10
+    {
+        /**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int x) { val = x; }
+ * }
+ */
+        public class Solution
+        {
+            public IList<int> PostorderTraversal(TreeNode root)
+            {
+                var stack = new Stack<object>();
+                var rs = new List<int>();
+                if (root == null) return rs;
+                stack.Push(root);
+                while (stack.Any())
+                {
+                    var top = stack.Pop();
+                    if (top is TreeNode)
+                    {
+                        var node = top as TreeNode;
+                        stack.Push(node.val);
+                        if (node.right != null)
+                        {
+                            stack.Push(node.right);
+                        }
+                        if (node.left != null)
+                        {
+                            stack.Push(node.left);
+                        }
+                    }
+                    else
+                    {
+                        var val = (int) (top);
+                        rs.Add(val);
+                    }
+                }
+
+                return rs;
+            }
+        }
+    }
 }

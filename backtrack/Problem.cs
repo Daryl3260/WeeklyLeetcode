@@ -507,4 +507,30 @@ namespace Leetcode.leetcode_cn.backtrack
             }
         }
     }
+
+    namespace p8
+    {
+        public class Solution {
+            public IList<IList<int>> Subsets(int[] nums) {
+                var rs = new List<IList<int>>();
+                SubSearch(new HashSet<int>(),nums,0,rs );
+                return rs;
+            }
+
+            public void SubSearch(ISet<int> set, int[] nums, int idx, IList<IList<int>> rs)
+            {
+                if (idx == nums.Length)
+                {
+                    rs.Add(set.ToList());
+                }
+                else
+                {
+                    SubSearch(set,nums,idx+1,rs);
+                    set.Add(nums[idx]);
+                    SubSearch(set,nums,idx+1,rs);
+                    set.Remove(nums[idx]);
+                }
+            }
+        }
+    }
 }

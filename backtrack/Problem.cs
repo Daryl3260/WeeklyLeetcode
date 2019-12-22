@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Leetcode.leetcode_cn.backtrack
 {
@@ -283,5 +284,227 @@ namespace Leetcode.leetcode_cn.backtrack
             }
         }
     }
-    
+
+    namespace p4
+    {
+        public class Solution {
+            public static Dictionary<char,IList<char>> dict = new Dictionary<char, IList<char>>
+            {
+                {'2',new List<char>{'a','b','c'}},
+                {'3',new List<char>{'d','e','f'}},
+                {'4',new List<char>{'g','h','i'}},
+                {'5',new List<char>{'j','k','l'}},
+                {'6',new List<char>{'m','n','o'}},
+                {'7',new List<char>{'p','q','r','s'}},
+                {'8',new List<char>{'t','u','v'}},
+                {'9',new List<char>{'w','x','y','z'}}
+            };
+
+            public IList<string> LetterCombinations(string digits) {
+                var rs = new List<string>();
+                if (string.IsNullOrEmpty(digits)) return rs;
+                SubSearch(digits,0,"",rs);
+                return rs;
+            }
+
+            public void SubSearch(string digits, int idx, string pre, IList<string> rs)
+            {
+                if (idx == digits.Length)
+                {
+                    rs.Add(pre);
+                }
+                else
+                {
+                    var digit = digits[idx];
+                    var paths = dict[digit];
+                    foreach (var path in paths)
+                    {
+                        SubSearch(digits,idx+1,$"{pre}{path}",rs);
+                    }
+                }
+            }
+        }
+    }
+
+    namespace p5
+    {
+        //add left when there is left available
+        //add right when there is right available and num(left) > num(right)
+        public class Solution {
+            public IList<string> GenerateParenthesis(int n) {
+                var rs = new List<string>();
+                if (n <= 0) return rs;
+                SubSearch("",0,n,rs);
+                return rs;
+            }
+
+            public void SubSearch(string pre, int leftSubRight, int leftLeft,IList<string> rs)
+            {
+                if (leftSubRight == 0 && leftLeft == 0)
+                {
+                    rs.Add(pre);
+                    return;
+                }
+                if (leftLeft > 0)
+                {
+                    SubSearch(pre+"(",leftSubRight+1,leftLeft-1,rs);
+                }
+
+                if (leftSubRight > 0)
+                {
+                    SubSearch(pre+")",leftSubRight-1,leftLeft,rs);
+                }
+                
+                    
+            }
+        }
+    }
+
+    namespace p6
+    {
+        public class Solution {
+            public IList<IList<int>> Permute(int[] nums) {
+                var pre = new List<int>();
+                var rs = new List<IList<int>>();
+                if (nums == null || nums.Length == 0) return rs;
+                var len = nums.Length;
+                var visited = new bool[len];
+                SubSearch(nums, visited, pre, rs);
+                return rs;
+            }
+
+            public void SubSearch(int[] nums, bool[] visited, IList<int> pre, IList<IList<int>> rs)
+            {
+                if (pre.Count == nums.Length)
+                {
+                    var list = new List<int>(pre);
+                    rs.Add(list);
+                    return;
+                }
+
+                for (var i = 0; i < visited.Length; i++)
+                {
+                    if (!visited[i])
+                    {
+                        var num = nums[i];
+                        visited[i] = true;
+                        pre.Add(num);
+                        SubSearch(nums,visited,pre,rs);
+                        pre.RemoveAt(pre.Count-1);
+                        visited[i] = false;
+                    }
+                }
+                
+            }
+        }
+    }
+
+    namespace p6.v2
+    {
+        public class Solution {
+            public IList<IList<int>> Permute(int[] nums) {
+                if(nums==null||nums.Length==0)return new List<IList<int>>();
+                var rs = new List<IList<int>>();
+                SubSearch(new HashSet<int>(nums),new List<int>(),rs  );
+                return rs;
+            }
+
+            public void SubSearch(ISet<int> remains,IList<int> pre,IList<IList<int>> rs)
+            {
+                if (remains.Any())
+                {
+                    var temp = new List<int>(remains);
+                    foreach (var elem in temp)
+                    {
+                        remains.Remove(elem);
+                        pre.Add(elem);
+                        SubSearch(remains,pre,rs);
+                        pre.RemoveAt(pre.Count-1);
+                        remains.Add(elem);
+                    }
+                }
+                else
+                {
+                    var list = new List<int>(pre);
+                    rs.Add(list);
+                }
+            }
+        }
+    }
+
+    namespace p7
+    {
+        public class Solution {
+            public IList<IList<string>> SolveNQueens(int n) {
+                if(n==1)return new List<IList<string>>{new List<string>{"Q"}};
+                if(n<4)return new List<IList<string>>();
+                var record = new int[n];
+                var rs = new List<IList<string>>();
+                SubSearch(record,0,rs);
+                return rs;
+            }
+
+            public IList<string> RecordToResult(int[] record)
+            {
+                var rs = new List<string>();
+                var n = record.Length;
+                foreach (var elem in record)
+                {
+                    var builder = new StringBuilder();
+                    for (var i = 0; i < elem; i++)
+                    {
+                        builder.Append('.');
+                    }
+
+                    builder.Append('Q');
+                    for (var i = elem + 1; i < n; i++)
+                    {
+                        builder.Append('.');
+                    }
+                    rs.Add(builder.ToString());
+                }
+
+                return rs;
+            }
+
+            public IList<int> Available(int[] record,int idx)
+            {
+                var taken = new HashSet<int>();
+                var n = record.Length;
+                for (var i = 0; i < idx; i++)
+                {
+                    var position = record[i];
+                    taken.Add(position);
+                    var left = position - (idx - i);
+                    if (left > -1) taken.Add(left);
+                    var right = position + (idx - i);
+                    if (right < n) taken.Add(right);
+                }
+                var rs = new List<int>();
+                for (var i = 0; i < n; i++)
+                {
+                    if (!taken.Contains(i))
+                    {
+                        rs.Add(i);
+                    }
+                }
+
+                return rs;
+            }
+            public void SubSearch(int[] record, int idx, IList<IList<string>> rs)
+            {
+                if (idx == record.Length)
+                {
+                    rs.Add(RecordToResult(record));
+                }
+
+                var available = Available(record, idx);
+                foreach (var elem in available)
+                {
+                    record[idx] = elem;
+                    SubSearch(record,idx+1,rs);
+                }
+            }
+        }
+    }
 }

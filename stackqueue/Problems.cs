@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -465,6 +466,52 @@ namespace Leetcode.leetcode_cn.weeklyleetcode.stackqueue
         }
     }
 
+    namespace p5.V4
+    {
+        public class Solution {
+            public int[] NextGreaterElements(int[] nums)
+            {
+                if (nums == null || nums.Length == 0) return nums;
+                var dict = new Dictionary<int,int>();
+                var max = nums.Max();
+                var stack = new Stack<int>();
+                var firstLoop = true;
+                var idx = 0;
+                while (stack.Any()||firstLoop)
+                {
+                    var value = nums[idx];
+                    if (value == max)
+                    {
+                        dict[idx] = -1;
+                        while (stack.Any())
+                        {
+                            dict[stack.Pop()] = value;
+                        }
+                    }
+                    else
+                    {
+                        while (stack.Any() && nums[stack.Peek()] < value)
+                        {
+                            dict[stack.Pop()] = value;
+                        }
+                        stack.Push(idx);
+                    }
+
+                    idx = (idx + 1) % nums.Length;
+                    if (idx == 0) firstLoop = false;
+                }
+
+                var rs = new int[nums.Length];
+                foreach (var entry in dict)
+                {
+                    rs[entry.Key] = entry.Value;
+                }
+
+                return rs;
+            }
+        }
+    }
+
     namespace p6
     {
         public class Solution
@@ -586,6 +633,197 @@ namespace Leetcode.leetcode_cn.weeklyleetcode.stackqueue
             public bool HasNext()
             {
                 return idx < _list.Count;
+            }
+        }
+    }
+
+    namespace p8
+    {
+
+  public class TreeNode {
+      public int val;
+      public TreeNode left;
+      public TreeNode right;
+      public TreeNode(int x) { val = x; }
+  }
+ 
+        public class Solution {
+            public IList<IList<int>> ZigzagLevelOrder(TreeNode root) {
+                if(root==null)return new List<IList<int>>();
+                var rs = new List<IList<int>>();
+                var queue = new Queue<Tuple<TreeNode,int>>();
+                var currentLevel = 0;
+                var oneLevel = new List<int>();
+                queue.Enqueue(new Tuple<TreeNode, int>(root,0));
+                while (queue.Any())
+                {
+                    var top = queue.Dequeue();
+                    var node = top.Item1;
+                    var level = top.Item2;
+                    if (level > currentLevel)
+                    {
+                        if (currentLevel % 2 == 0)
+                        {
+                            rs.Add(oneLevel);
+                            oneLevel=new List<int>();
+                        }
+                        else
+                        {
+                            var temp = new List<int>();
+                            for (var i = oneLevel.Count-1; i > -1; i--)
+                            {
+                                temp.Add(oneLevel[i]);
+                            }
+                            rs.Add(temp);
+                            oneLevel.Clear();
+                        }
+                        currentLevel = level;
+                    }
+                    oneLevel.Add(node.val);
+                    if (node.left != null)
+                    {
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.left,level+1));
+                    }
+
+                    if (node.right != null)
+                    {
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.right,level+1));
+                    }
+                }
+
+                if (currentLevel % 2 == 0)
+                {
+                    rs.Add(oneLevel);
+                }
+                else
+                {
+                    oneLevel.Reverse();
+                    rs.Add(oneLevel);
+                }
+
+                return rs;
+            }
+        }
+    }
+
+    namespace p9
+    {
+        public class Solution {
+            public int EvalRPN(string[] tokens) {
+                var set = new HashSet<string>{"+","-","*","/"};
+                var stack = new Stack<int>();
+                foreach (var token in tokens)
+                {
+                    if (set.Contains(token))
+                    {
+                        var right = stack.Pop();
+                        var left = stack.Pop();
+                        var rs = 0;
+                        switch (token)
+                        {
+                            case "+":
+                                rs = left + right; break;
+                            case "-":
+                                rs = left - right; break;
+                            case "*":
+                                rs = left * right; break;
+                            case "/":
+                                rs = left / right; break;
+                        }
+                        stack.Push(rs);
+                    }
+                    else
+                    {
+                        stack.Push(int.Parse(token));
+                    }
+                }
+
+                return stack.Pop();
+            }
+        }
+    }
+
+    namespace p10
+    {
+        public class Solution {
+            public int LargestRectangleArea(int[] heights)
+            {
+                var rs = 0;
+                if (heights == null || heights.Length == 0) return 0;
+                for (var i = 0; i < heights.Length; i++)
+                {
+                    var height = heights[i];
+                    var width = 0;
+                    for (var j = i; j > -1; j--)
+                    {
+                        if (heights[j] >= height) width++;
+                        else break;
+                    }
+
+                    for (var j = i + 1; j < heights.Length; j++)
+                    {
+                        if (heights[j] >= height)
+                        {
+                            width++;
+                        }
+                        else break;
+                    }
+
+                    var area = width * height;
+                    rs = Math.Max(rs, area);
+                }
+
+                return rs;
+            }
+        }
+    }
+
+    namespace p10.V2
+    {
+        public class Solution {
+            public int LargestRectangleArea(int[] heights) {
+                var stack = new Stack<int>();
+                var maxArea = 0;
+                for (var i = 0; i < heights.Length; i++)
+                {
+                    if (!stack.Any() || heights[stack.Peek()] < heights[i])
+                    {
+                        stack.Push(i);
+                    }
+                    else
+                    {
+                        while (stack.Any() && heights[stack.Peek()] >= heights[i])
+                        {
+                            var idx = stack.Pop();
+                            var h = heights[idx];
+                            int area;
+                            if (stack.Any())
+                            {
+                                area = h * (i - stack.Peek() - 1);
+                            }
+                            else area = h * i;
+                            maxArea = Math.Max(maxArea, area);
+                        }
+                        stack.Push(i);
+                    }
+                }
+
+                while (stack.Count>1)
+                {
+                    var idx = stack.Pop();
+                    var height = heights[idx];
+                    var peek = stack.Peek();
+                    var area = (heights.Length - 1 - peek)*height;
+                    maxArea = Math.Max(maxArea, area);
+                }
+
+                if (stack.Any())
+                {
+                    var area = (heights[stack.Pop()] * heights.Length);
+                    maxArea = Math.Max(area, maxArea);
+                }
+
+                return maxArea;
             }
         }
     }

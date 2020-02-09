@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Leetcode.leetcode_cn.weeklyleetcode.sorting
 {
@@ -235,6 +236,140 @@ namespace Leetcode.leetcode_cn.weeklyleetcode.sorting
                     if(k<nums.Length) nums[k++] = list[i--];
                     if(k<nums.Length) nums[k++] = list[j--];
                 }
+            }
+        }
+    }
+
+    namespace p8
+    {
+        public class Solution {
+            public string LargestNumber(int[] nums) {
+                Array.Sort(nums,new MyComparer());
+                var builder = new StringBuilder();
+                foreach (var num in nums)
+                {
+                    builder.Append(num);
+                }
+
+                var str= builder.ToString().TrimStart('0');
+                if (string.IsNullOrEmpty(str)) return "0";
+                else return str;
+            }
+
+            public class MyComparer : Comparer<int>
+            {
+                public override int Compare(int x, int y)
+                {
+                    var strX = $"{x}{y}";
+                    var strY = $"{y}{x}";
+                    return -(strX.CompareTo(strY));
+                }
+            }
+        }
+    }
+
+    namespace p9
+    {
+        public class Solution {
+            public int[][] KClosest(int[][] points, int K) {
+                Array.Sort(points,new MyComparer());
+                var list = new List<int[]>();
+                for (var i = 0; i < K; i++)
+                {
+                    list.Add(points[i]);
+                }
+
+                return list.ToArray();
+            }
+
+            public class MyComparer : Comparer<int[]>
+            {
+                public override int Compare(int[] x, int[] y)
+                {
+                    var sqrX = (x[0] * x[0]) + (x[1] * x[1]);
+                    var sqrY = (y[0] * y[0]) + (y[1] * y[1]);
+                    return sqrX - sqrY;
+                }
+            }
+        }
+    }
+
+    namespace p10
+    {
+        public class Solution {
+            List<int> Left = new List<int>();
+            List<int> Right = new List<int>();
+            public int ReversePairs(int[] nums)
+            {
+                if (nums == null || nums.Length == 0) return 0;
+                return MergeSort(nums, 0, nums.Length);
+            }
+
+            public int MergeSort(int[] nums, int lo, int hi)
+            {
+                if (hi-lo<2) return 0;
+                var rs = 0;
+                var mid = lo + (hi - lo) / 2;
+                rs += MergeSort(nums, lo, mid) + MergeSort(nums, mid, hi);
+                for (var i = lo; i < mid; i++)
+                {
+                    for (var j = mid; j < hi; j++)
+                    {
+                        var li = (long) (nums[i]);
+                        var lj = (long) (nums[j]);
+                        if (li > 2L * lj)
+                        {
+                            rs++;
+                        }
+                        else break;
+                    }
+                }
+                Merge(nums,lo,mid,hi);
+                return rs;
+            }
+
+            public void Merge(int[] nums, int lo, int mid, int hi)
+            {
+                Left.Clear();
+                for (var idx = lo; idx < mid; idx++)
+                {
+                    Left.Add(nums[idx]);
+                }
+                var i = 0;
+                var k = lo;
+                var j = mid;
+                while (k < hi)
+                {
+                    if (i < Left.Count && (j == hi || Left[i] < nums[j]))
+                    {
+                        nums[k++] = Left[i++];
+                    }
+                    else
+                    {
+                        nums[k++] = nums[j++];
+                    }
+                }
+                // var i = 0;
+                // var j = 0;
+                // var k = 0;
+                // var counter = 0;
+                // while (k < hi - lo)
+                // {
+                //     if (i >= mid - lo)
+                //     {
+                //         nums[lo+(k++)] = nums[mid + (j++)];
+                //     }
+                //     else if (j >= hi - mid)
+                //     {
+                //         nums[lo + (k++)] = temp[i++];
+                //     }
+                //     else
+                //     {
+                //         var left = temp[i];
+                //         var right = nums[mid + j];
+                //         
+                //     }
+                // }
             }
         }
     }

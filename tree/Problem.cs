@@ -21,6 +21,14 @@ namespace Leetcode.leetcode_cn.tree
 
     namespace p1
     {
+        public class Solut
+        {
+            public int age { get; set; }
+            public IList<int> LevelInt()
+            {
+                return null;
+            }
+        }
 
 
 
@@ -374,8 +382,8 @@ namespace Leetcode.leetcode_cn.tree
                 if (root == null) return "null";
                 var currentDepth = 0;
                 var subList = new List<TreeNode>();
-                var queue = new Queue<Tuple<TreeNode,int>>();
-                queue.Enqueue(new Tuple<TreeNode, int>(root,0));
+                var queue = new Queue<Tuple<TreeNode, int>>();
+                queue.Enqueue(new Tuple<TreeNode, int>(root, 0));
                 var builder = new StringBuilder();
                 while (queue.Any())
                 {
@@ -402,8 +410,8 @@ namespace Leetcode.leetcode_cn.tree
                     subList.Add(node);
                     if (node != null)
                     {
-                        queue.Enqueue(new Tuple<TreeNode, int>(node.left,depth+1));
-                        queue.Enqueue(new Tuple<TreeNode, int>(node.right,depth+1));
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.left, depth + 1));
+                        queue.Enqueue(new Tuple<TreeNode, int>(node.right, depth + 1));
                     }
                 }
 
@@ -414,16 +422,16 @@ namespace Leetcode.leetcode_cn.tree
             public TreeNode deserialize(string data)
             {
                 if (data == "null") return null;
-                var levels = data.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+                var levels = data.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                 var topLevel = levels[0];
-                var values = topLevel.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                var values = topLevel.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 var root = new TreeNode(int.Parse(values[0]));
-                var previousLevel = new List<TreeNode>{root};
+                var previousLevel = new List<TreeNode> { root };
                 var nodeList = new List<TreeNode>();
                 for (var i = 1; i < levels.Length; i++)
                 {
                     var level = levels[i];
-                    values = level.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                    values = level.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (var value in values)
                     {
                         if (value == "null")
@@ -445,16 +453,16 @@ namespace Leetcode.leetcode_cn.tree
                     previousLevel.Clear();
                     foreach (var treeNode in nodeList)
                     {
-                        if(treeNode!=null)previousLevel.Add(treeNode);
+                        if (treeNode != null) previousLevel.Add(treeNode);
                     }
                     nodeList.Clear();
                 }
-                
+
                 return root;
             }
         }
 
-        
+
     }
 
     namespace p10
@@ -494,7 +502,7 @@ namespace Leetcode.leetcode_cn.tree
                     }
                     else
                     {
-                        var val = (int) (top);
+                        var val = (int)(top);
                         rs.Add(val);
                     }
                 }
@@ -553,13 +561,15 @@ namespace Leetcode.leetcode_cn.tree
  *     public TreeNode(int x) { val = x; }
  * }
  */
-        public class Solution {
+        public class Solution
+        {
             public class Wrapper
             {
                 public int Val { get; set; }
             }
-            public IList<int> PostorderTraversal(TreeNode root) {
-                if(root==null)return new List<int>();
+            public IList<int> PostorderTraversal(TreeNode root)
+            {
+                if (root == null) return new List<int>();
                 var stack = new Stack<object>();
                 stack.Push(root);
                 var rs = new List<int>();
@@ -569,9 +579,9 @@ namespace Leetcode.leetcode_cn.tree
                     if (top is TreeNode)
                     {
                         var node = top as TreeNode;
-                        stack.Push(new Wrapper{Val = node.val});
-                        if(node.right!=null) stack.Push(node.right);
-                        if(node.left!=null) stack.Push(node.left);
+                        stack.Push(new Wrapper { Val = node.val });
+                        if (node.right != null) stack.Push(node.right);
+                        if (node.left != null) stack.Push(node.left);
                     }
                     else
                     {
@@ -582,5 +592,5 @@ namespace Leetcode.leetcode_cn.tree
                 return rs;
             }
         }
-}
+    }
 }

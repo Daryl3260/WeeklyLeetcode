@@ -64,7 +64,6 @@ namespace Leetcode.leetcode_cn.tree
                     {
                         queue.Enqueue(new Tuple<TreeNode, int>(node.right, level + 1));
                     }
-
                 }
 
                 rs.Add(subList);
